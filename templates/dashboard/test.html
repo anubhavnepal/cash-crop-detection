@@ -1,0 +1,436 @@
+{% extends 'index.html' %}
+
+{% block title %}
+  <title>Calculators Dashboard | Crop Disease Predictor</title>
+{% endblock title %}
+
+{% block style %}
+<style>
+  /* Container and sidebar (reusing your layout structure) */
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  .container {
+    display: flex;
+    flex: 1;
+    flex-direction: row;
+  }
+  .sidebar {
+    width: 250px;
+    background-color: #2c3e50;
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    height: 100vh;
+    left: 0;
+    overflow-y: auto;
+  }
+  .sidebar ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+  .sidebar ul li {
+    margin-bottom: 15px;
+  }
+  .sidebar ul li a {
+    text-decoration: none;
+    color: #ecf0f1;
+    font-size: 16px;
+    display: block;
+    padding: 10px;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+  }
+  .sidebar ul li a:hover,
+  .sidebar ul li a.active {
+    background-color: #0dd962;
+    color: #fff;
+  }
+  .sidebar ul li i {
+    margin-right: 10px;
+  }
+  .main-content {
+    flex: 1;
+    padding: 20px;
+    margin-left: 250px;
+  }
+
+  /* --- Calculator Cards Grid --- */
+  .calculators-cards-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin: 20px 0;
+  }
+  .calc-card {
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    border: 1px solid #e0e0e0;
+    transition: transform 0.2s ease;
+    cursor: pointer;
+    text-align: center;
+  }
+  .calc-card:hover {
+    transform: translateY(-3px);
+  }
+  .calc-card i {
+    font-size: 2.5rem;
+    color: #0dd962;
+    margin-bottom: 10px;
+  }
+  .calc-card h3 {
+    margin: 0.5rem 0;
+    color: #2c3e50;
+    font-size: 1.5rem;
+  }
+  .calc-card p {
+    color: #34495e;
+    font-size: 1rem;
+  }
+
+  /* --- Calculator Form Sections --- */
+  .calculator-section {
+    display: none;
+    margin-top: 20px;
+  }
+  .calculator-section.active {
+    display: block;
+  }
+  .back-btn {
+    margin-top: 20px;
+    padding: 10px 15px;
+    background-color: #0dd962;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .back-btn:hover {
+    background-color: #089c45;
+  }
+  /* Form element styling */
+  input[type="number"],
+  input[type="date"],
+  select {
+    width: 100%;
+    padding: 8px;
+    margin: 10px 0 20px 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+  .btn {
+    padding: 10px 15px;
+    background-color: #0dd962;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .btn:hover {
+    background-color: #089c45;
+  }
+  .result {
+    text-align: center;
+    font-size: 1.2rem;
+    margin-top: 20px;
+    color: #2c3e50;
+  }
+</style>
+{% endblock style %}
+
+{% block content %}
+<div class="container">
+  <div class="sidebar">
+    <ul>
+      <li>
+        <a href="{% url 'crops' %}" class="{% if request.resolver_match.url_name == 'crops' or 'crop_detail' in request.resolver_match.url_name %}active{% endif %}">
+          <i class="fas fa-leaf"></i> Supported Crops
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'nearby-shop' %}" class="{% if request.resolver_match.url_name == 'nearby-shop' %}active{% endif %}">
+          <i class="fas fa-store"></i> Crop Seed Shops
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'market-price' %}" class="{% if request.resolver_match.url_name == 'market-price' %}active{% endif %}">
+          <i class="fas fa-store"></i> Market Price
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'cost-calculator' %}" class="{% if request.resolver_match.url_name == 'cost-calculator' %}active{% endif %}">
+          <i class="fas fa-calculator"></i> Cost Calculator
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'upload' %}" class="{% if request.resolver_match.url_name == 'upload' %}active{% endif %}">
+          <i class="fas fa-upload"></i> Upload Image
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'past_records' %}" class="{% if request.resolver_match.url_name == 'past_records' %}active{% endif %}">
+          <i class="fas fa-history"></i> Past Records
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'user_profile' %}" class="{% if request.resolver_match.url_name == 'user_profile' %}active{% endif %}">
+          <i class="fas fa-user"></i> User Profile Section
+        </a>
+      </li>
+    </ul>
+  </div>
+  
+  <div class="main-content">
+    <h1>Seasonal Calculators Dashboard</h1>
+    
+    <!-- Cards Container: Click a card to open its calculator -->
+    <div id="cards-container" class="calculators-cards-container">
+      <!-- Card 1: Optimal Sowing & Harvesting Calculator -->
+      <div class="calc-card" data-target="calc-sowing">
+        <i class="fas fa-calendar-alt"></i>
+        <h3>Sowing & Harvesting</h3>
+        <p>Get optimal sowing and harvesting dates based on seasonal data.</p>
+      </div>
+      <!-- Card 2: Yield Prediction Calculator -->
+      <div class="calc-card" data-target="calc-yield">
+        <i class="fas fa-chart-line"></i>
+        <h3>Yield Prediction</h3>
+        <p>Estimate yield using base yield and season suitability factors.</p>
+      </div>
+      <!-- Card 3: Seasonal Water Requirement Calculator -->
+      <div class="calc-card" data-target="calc-water">
+        <i class="fas fa-tint"></i>
+        <h3>Water Requirement</h3>
+        <p>Calculate the total water needed over the season.</p>
+      </div>
+      <!-- Card 4: Profit Estimation Calculator -->
+      <div class="calc-card" data-target="calc-profit">
+        <i class="fas fa-money-bill-wave"></i>
+        <h3>Profit Estimation</h3>
+        <p>Estimate profit by comparing yield revenue with cultivation costs.</p>
+      </div>
+      <!-- Card 5: Crop Rotation & Alternative Crop Suggestion -->
+      <div class="calc-card" data-target="calc-rotation">
+        <i class="fas fa-sync-alt"></i>
+        <h3>Crop Rotation</h3>
+        <p>Get suggestions for alternative crops and rotation strategies.</p>
+      </div>
+    </div>
+    
+    <!-- Calculator Sections (initially hidden) -->
+    <div id="calculator-sections">
+      
+      <!-- 1. Sowing & Harvesting Calculator -->
+      <div id="calc-sowing" class="calculator-section">
+        <h2>Sowing & Harvesting Calculator</h2>
+        <form id="sowing-form">
+          <div class="form-group">
+            <label for="sowing-date">Enter Sowing Date:</label>
+            <input type="date" id="sowing-date" name="sowing_date" required>
+          </div>
+          <div class="form-group">
+            <label for="growth-duration">Growth Duration (days):</label>
+            <input type="number" id="growth-duration" name="growth_duration" placeholder="e.g., 90" required>
+          </div>
+          <button type="button" class="btn" onclick="calculateHarvest()">Calculate Harvest Date</button>
+        </form>
+        <div id="sowing-result" class="result"></div>
+        <button class="back-btn" onclick="showCards()">Back to Calculators</button>
+      </div>
+      
+      <!-- 2. Yield Prediction Calculator -->
+      <div id="calc-yield" class="calculator-section">
+        <h2>Yield Prediction Calculator</h2>
+        <form id="yield-form">
+          <div class="form-group">
+            <label for="base-yield">Base Yield (per hectare):</label>
+            <input type="number" id="base-yield" name="base_yield" placeholder="e.g., 1000" required>
+          </div>
+          <div class="form-group">
+            <label for="suitability-factor">Season Suitability Factor (e.g., 1.0 for ideal):</label>
+            <input type="number" step="0.1" id="suitability-factor" name="suitability_factor" placeholder="e.g., 0.8" required>
+          </div>
+          <button type="button" class="btn" onclick="calculateYield()">Calculate Predicted Yield</button>
+        </form>
+        <div id="yield-result" class="result"></div>
+        <button class="back-btn" onclick="showCards()">Back to Calculators</button>
+      </div>
+      
+      <!-- 3. Seasonal Water Requirement Calculator -->
+      <div id="calc-water" class="calculator-section">
+        <h2>Water Requirement Calculator</h2>
+        <form id="water-form">
+          <div class="form-group">
+            <label for="water-per-day">Water per Day (liters per plant):</label>
+            <input type="number" id="water-per-day" name="water_per_day" placeholder="e.g., 2" required>
+          </div>
+          <div class="form-group">
+            <label for="days-in-season">Number of Days in Season:</label>
+            <input type="number" id="days-in-season" name="days_in_season" placeholder="e.g., 120" required>
+          </div>
+          <div class="form-group">
+            <label for="number-of-plants">Number of Plants:</label>
+            <input type="number" id="number-of-plants" name="number_of_plants" placeholder="e.g., 50" required>
+          </div>
+          <button type="button" class="btn" onclick="calculateWater()">Calculate Total Water Needed</button>
+        </form>
+        <div id="water-result" class="result"></div>
+        <button class="back-btn" onclick="showCards()">Back to Calculators</button>
+      </div>
+      
+      <!-- 4. Profit Estimation Calculator -->
+      <div id="calc-profit" class="calculator-section">
+        <h2>Profit Estimation Calculator</h2>
+        <form id="profit-form">
+          <div class="form-group">
+            <label for="estimated-yield">Estimated Yield (kg):</label>
+            <input type="number" id="estimated-yield" name="estimated_yield" placeholder="e.g., 1000" required>
+          </div>
+          <div class="form-group">
+            <label for="price-per-kg">Price per Kg:</label>
+            <input type="number" id="price-per-kg" name="price_per_kg" placeholder="e.g., 2" required>
+          </div>
+          <div class="form-group">
+            <label for="total-cost">Total Cost:</label>
+            <input type="number" id="total-cost" name="total_cost" placeholder="e.g., 500" required>
+          </div>
+          <button type="button" class="btn" onclick="calculateProfit()">Calculate Profit</button>
+        </form>
+        <div id="profit-result" class="result"></div>
+        <button class="back-btn" onclick="showCards()">Back to Calculators</button>
+      </div>
+      
+      <!-- 5. Crop Rotation & Alternative Crop Suggestion -->
+      <div id="calc-rotation" class="calculator-section">
+        <h2>Crop Rotation & Alternative Crop Suggestion</h2>
+        <form id="rotation-form">
+          <div class="form-group">
+            <label for="current-crop">Current Crop:</label>
+            <input type="text" id="current-crop" name="current_crop" placeholder="e.g., Potato" required>
+          </div>
+          <div class="form-group">
+            <label for="soil-nitrogen">Soil Nitrogen Level (e.g., Low, Medium, High):</label>
+            <select id="soil-nitrogen" name="soil_nitrogen" required>
+              <option value="Low">Low</option>
+              <option value="Medium">Medium</option>
+              <option value="High">High</option>
+            </select>
+          </div>
+          <button type="button" class="btn" onclick="calculateRotation()">Get Crop Rotation Suggestions</button>
+        </form>
+        <div id="rotation-result" class="result"></div>
+        <button class="back-btn" onclick="showCards()">Back to Calculators</button>
+      </div>
+      
+    </div>
+  </div>
+</div>
+
+<script>
+  // When a card is clicked, hide the card grid and show the related calculator section.
+  document.querySelectorAll('.calc-card').forEach(function(card) {
+    card.addEventListener('click', function() {
+      var targetId = this.getAttribute('data-target');
+      document.getElementById('cards-container').style.display = 'none';
+      document.querySelectorAll('.calculator-section').forEach(function(section) {
+        section.classList.remove('active');
+      });
+      document.getElementById(targetId).classList.add('active');
+    });
+  });
+
+  // Function to return to the main cards view.
+  function showCards() {
+    document.getElementById('cards-container').style.display = 'grid';
+    document.querySelectorAll('.calculator-section').forEach(function(section) {
+      section.classList.remove('active');
+    });
+  }
+
+  // Calculation Functions:
+  function calculateHarvest() {
+    var sowingDate = document.getElementById('sowing-date').value;
+    var growthDuration = parseInt(document.getElementById('growth-duration').value);
+    if (sowingDate && growthDuration) {
+      var sowing = new Date(sowingDate);
+      sowing.setDate(sowing.getDate() + growthDuration);
+      var harvestDate = sowing.toISOString().split('T')[0];
+      document.getElementById('sowing-result').innerText = 'Estimated Harvest Date: ' + harvestDate;
+    }
+  }
+
+  function calculateYield() {
+    var baseYield = parseFloat(document.getElementById('base-yield').value);
+    var suitabilityFactor = parseFloat(document.getElementById('suitability-factor').value);
+    if (!isNaN(baseYield) && !isNaN(suitabilityFactor)) {
+      var predictedYield = baseYield * suitabilityFactor;
+      document.getElementById('yield-result').innerText = 'Predicted Yield: ' + predictedYield + ' per hectare';
+    }
+  }
+
+  function calculateWater() {
+    var waterPerDay = parseFloat(document.getElementById('water-per-day').value);
+    var daysInSeason = parseInt(document.getElementById('days-in-season').value);
+    var numberOfPlants = parseInt(document.getElementById('number-of-plants').value);
+    if (!isNaN(waterPerDay) && !isNaN(daysInSeason) && !isNaN(numberOfPlants)) {
+      var totalWater = waterPerDay * daysInSeason * numberOfPlants;
+      document.getElementById('water-result').innerText = 'Total Water Needed: ' + totalWater + ' liters';
+    }
+  }
+
+  function calculateProfit() {
+    var estimatedYield = parseFloat(document.getElementById('estimated-yield').value);
+    var pricePerKg = parseFloat(document.getElementById('price-per-kg').value);
+    var totalCost = parseFloat(document.getElementById('total-cost').value);
+    if (!isNaN(estimatedYield) && !isNaN(pricePerKg) && !isNaN(totalCost)) {
+      var revenue = estimatedYield * pricePerKg;
+      var profit = revenue - totalCost;
+      document.getElementById('profit-result').innerText = 'Estimated Profit: $' + profit;
+    }
+  }
+
+  function calculateRotation() {
+    var currentCrop = document.getElementById('current-crop').value.toLowerCase();
+    var soilNitrogen = document.getElementById('soil-nitrogen').value.toLowerCase();
+    var suggestion = '';
+    if (currentCrop && soilNitrogen) {
+      // A simple suggestion logic (customize as needed)
+      if (currentCrop === 'potato') {
+        suggestion = (soilNitrogen === 'low') ? 'Consider planting legumes to improve nitrogen.' : 'Consider planting cereals for rotation.';
+      } else if (currentCrop === 'wheat') {
+        suggestion = 'Consider planting legumes or mustard for rotation.';
+      } else {
+        suggestion = 'Consider a nitrogen-fixing crop like beans or peas.';
+      }
+      document.getElementById('rotation-result').innerText = suggestion;
+    }
+  }
+</script>
+{% endblock content %}
+
+Sugarcane = SeasonalHarvesting.objects.create(
+    title: "Sugarcane",
+    icon: "fas fa-leaf",
+    season: [
+      { label: "Planting", period: "February–March", icon: "far fa-calendar-check" },
+      { label: "Harvesting", period: "November–December", icon: "fas fa-calendar-day" }
+    ],
+    techniques: [
+      "Plant in deep, well-drained soil with high organic content.",
+      "Use healthy setts (cuttings) for planting.",
+      "Regular watering and fertilization for robust growth.",
+      "Control weeds and pests periodically.",
+      "Harvest at maturity for peak sugar content.",
+      "Cut the cane at the base with a sharp blade.",
+    ]
+)

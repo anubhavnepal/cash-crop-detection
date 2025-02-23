@@ -1,0 +1,32 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    
+    {% block title %}{% endblock %}
+
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+    <script src="https://kit.fontawesome.com/d0d7b03f01.js" crossorigin="anonymous"></script>
+
+    {% block head %}{% endblock %}
+
+    {% block style %}{% endblock %}
+
+    {% block script %}{% endblock %}
+  </head>
+  <body>
+    {% include "header.html" %}
+
+    {% block content %}{% endblock %}
+    
+  </body>
+</html>

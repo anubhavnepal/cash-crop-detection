@@ -1,0 +1,52 @@
+import pickle
+import os
+
+# Combine all class labels into a single list
+class_labels = [
+    # Coffee
+    'Cerscospora', 
+    'Healthy', 
+    'Leaf Rust', 
+    'Phoma', 
+    'Miner',
+
+    # Cotton
+    'Aphids', 
+    'Army Worm', 
+    'Bacterial Blight', 
+    'Healthy', 
+    'Powdery Mildew', 
+    'Target Spot',
+
+    # Potato
+    'Potato Early Blight', 
+    'Potato Healthy', 
+    'Potato Late Blight',
+
+    # Sugarcane RA
+    'Bacterial Blight', 
+    'Healthy', 
+    'Red Rot',
+
+    # Tea Sickness Dataset
+    'Algal Leaf', 
+    'Anthracnose', 
+    'Bird Eye Spot', 
+    'Brown Blight', 
+    'Gray Light', 
+    'Healthy', 
+    'Red Leaf Spot', 
+    'White Spot'
+]
+
+# Define the path where you want to save the label file
+label_pkl_path = r'C:\Users\Jeny Tiwari\OneDrive\Desktop\PDD\model\model_files\label_list.pkl'
+
+# Ensure the model_files directory exists
+os.makedirs(os.path.dirname(label_pkl_path), exist_ok=True)
+
+# Save the class labels to a pickle file
+with open(label_pkl_path, 'wb') as f:
+    pickle.dump(class_labels, f)
+
+print(f"Label file created at: {label_pkl_path}")

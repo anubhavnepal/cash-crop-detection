@@ -1,0 +1,64 @@
+{% extends 'layouts.html' %}
+{% load static %}
+
+{% block title %}
+<title>Login | Crop Disease Predictor</title>
+{% endblock title %}
+
+{% block style %}
+<style>
+  .errorlist {
+    color: red;
+    list-style: none;
+    padding: 0;
+    margin: 0 0 15px 0;
+    font-size: 14px;
+  }
+  .errorlist.nonfield {
+    margin-bottom: 15px;
+  }
+</style>
+{% endblock style %}
+
+{% block content %}
+<div class="auth-page">
+  <div class="background">
+    <div class="container">
+      <div class="right-section section">
+        <h2>Don't have an account?</h2>
+        <p>Create an account today to enjoy personalized features, exclusive content, and more.</p>
+        <a href="{% url 'register' %}" class="button button-secondary" id="signup-button">Sign Up</a>
+      </div>
+      <div class="left-section section">
+        <h2>LOGIN</h2>
+        <form action="{% url 'login' %}" method="POST">
+          {% csrf_token %}
+          
+          {% if form.non_field_errors %}
+            <div class="errorlist nonfield">
+              {{ form.non_field_errors }}
+            </div>
+          {% endif %}
+
+          <div class="form-group">
+            {{ form.username }}
+            {% if form.username.errors %}
+              <div class="errorlist">{{ form.username.errors }}</div>
+            {% endif %}
+          </div>
+
+          <div class="form-group">
+            {{ form.password }}
+            {% if form.password.errors %}
+              <div class="errorlist">{{ form.password.errors }}</div>
+            {% endif %}
+          </div>
+
+          <!-- <a href="#" class="forgot-password">Forgot password?</a> -->
+          <button type="submit" class="button button-primary">Log In</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}

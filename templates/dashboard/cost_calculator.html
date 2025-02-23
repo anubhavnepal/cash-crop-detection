@@ -1,0 +1,475 @@
+{% extends 'index.html' %} {% load static %} {% block title %}
+<title>Farming Optimization Tools | Crop Disease Predictor</title>
+{% endblock title %} {% block dashboard_content %}
+<div id="cost-calculator-wrapper">
+  <div class="cost-calculator-container">
+    <h2>Optimization Tools</h2>
+
+    <!-- Cards Container: Click a card to open its calculator -->
+    <div id="cards-container" class="calculators-cards-container">
+      <!-- Card 1: Optimal Sowing & Harvesting Calculator -->
+      <div class="calc-card" data-target="calc-sowing">
+        <i class="fas fa-calendar-alt"></i>
+        <h3>Sowing & Harvesting</h3>
+        <p>Get optimal sowing and harvesting dates based on seasonal data.</p>
+      </div>
+      <!-- Card 2: Yield Prediction Calculator -->
+      <div class="calc-card" data-target="calc-yield">
+        <i class="fas fa-chart-line"></i>
+        <h3>Yield Prediction</h3>
+        <p>Estimate yield using base yield and season suitability factors.</p>
+      </div>
+      <!-- Card 3: Seasonal Water Requirement Calculator -->
+      <div class="calc-card" data-target="calc-water">
+        <i class="fas fa-tint"></i>
+        <h3>Water Requirement</h3>
+        <p>Calculate the total water needed over the season.</p>
+      </div>
+      <!-- Card 4: Profit Estimation Calculator -->
+      <div class="calc-card" data-target="calc-profit">
+        <i class="fas fa-money-bill-wave"></i>
+        <h3>Profit Estimation</h3>
+        <p>
+          Estimate profit by comparing yield revenue with cultivation costs.
+        </p>
+      </div>
+      <!-- Card 5: Crop Rotation & Alternative Crop Suggestion -->
+      <div class="calc-card" data-target="calc-rotation">
+        <i class="fas fa-sync-alt"></i>
+        <h3>Crop Rotation</h3>
+        <p>Get suggestions for alternative crops and rotation strategies.</p>
+      </div>
+    </div>
+
+    <!-- Calculator Sections (initially hidden) -->
+    <div id="calculator-sections">
+      <!-- 1. Sowing & Harvesting Calculator -->
+      <div id="calc-sowing" class="calculator-section">
+        <h3>Sowing & Harvesting Calculator</h3>
+        <form id="sowing-form">
+          <div class="form-group">
+            <label for="sowing-date">Enter Sowing Date:</label>
+            <input type="date" id="sowing-date" name="sowing_date" required />
+          </div>
+          <div class="form-group">
+            <label for="growth-duration">Growth Duration (days):</label>
+            <input
+              type="number"
+              id="growth-duration"
+              name="growth_duration"
+              placeholder="e.g., 90"
+              required
+            />
+          </div>
+          <button type="button" class="btn" onclick="calculateHarvest()">
+            Calculate Harvest Date
+          </button>
+          <button type="button" class="btn" onclick="resetHarvest()">
+            Reset
+          </button>
+        </form>
+        <div id="sowing-result" class="result"></div>
+        <button class="back-btn" onclick="showCards()">
+          Back to Calculators
+        </button>
+      </div>
+
+      <!-- 2. Yield Prediction Calculator -->
+      <div id="calc-yield" class="calculator-section">
+        <h3>Yield Prediction Calculator</h3>
+        <form id="yield-form">
+          <div class="form-group">
+            <label for="base-yield">Base Yield (per hectare):</label>
+            <input
+              type="number"
+              id="base-yield"
+              name="base_yield"
+              placeholder="e.g., 1000"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="suitability-factor"
+              >Season Suitability Factor (e.g., 1.0 for ideal):</label
+            >
+            <input
+              type="number"
+              step="0.1"
+              id="suitability-factor"
+              name="suitability_factor"
+              placeholder="e.g., 0.8"
+              required
+            />
+          </div>
+          <button type="button" class="btn" onclick="calculateYield()">
+            Calculate Predicted Yield
+          </button>
+          <button type="button" class="btn" onclick="resetYield()">
+            Reset
+          </button>
+        </form>
+        <div id="yield-result" class="result"></div>
+        <button class="back-btn" onclick="showCards()">
+          Back to Calculators
+        </button>
+      </div>
+
+      <!-- 3. Seasonal Water Requirement Calculator -->
+      <div id="calc-water" class="calculator-section">
+        <h3>Water Requirement Calculator</h3>
+        <form id="water-form">
+          <div class="form-group">
+            <label for="water-per-day">Water per Day (liters per plant):</label>
+            <input
+              type="number"
+              id="water-per-day"
+              name="water_per_day"
+              placeholder="e.g., 2"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="days-in-season">Number of Days in Season:</label>
+            <input
+              type="number"
+              id="days-in-season"
+              name="days_in_season"
+              placeholder="e.g., 120"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="number-of-plants">Number of Plants:</label>
+            <input
+              type="number"
+              id="number-of-plants"
+              name="number_of_plants"
+              placeholder="e.g., 50"
+              required
+            />
+          </div>
+          <button type="button" class="btn" onclick="calculateWater()">
+            Calculate Total Water Needed
+          </button>
+          <button type="button" class="btn" onclick="resetWater()">
+            Reset
+          </button>
+        </form>
+        <div id="water-result" class="result"></div>
+        <button class="back-btn" onclick="showCards()">
+          Back to Calculators
+        </button>
+      </div>
+
+      <!-- 4. Profit Estimation Calculator -->
+      <div id="calc-profit" class="calculator-section">
+        <h3>Profit Estimation Calculator</h3>
+        <form id="profit-form">
+          <div class="form-group">
+            <label for="estimated-yield">Estimated Yield (kg):</label>
+            <input
+              type="number"
+              id="estimated-yield"
+              name="estimated_yield"
+              placeholder="e.g., 1000"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="price-per-kg">Price per Kg:</label>
+            <input
+              type="number"
+              id="price-per-kg"
+              name="price_per_kg"
+              placeholder="e.g., 2"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="total-cost">Total Cost:</label>
+            <input
+              type="number"
+              id="total-cost"
+              name="total_cost"
+              placeholder="e.g., 500"
+              required
+            />
+          </div>
+          <button type="button" class="btn" onclick="calculateProfit()">
+            Calculate Profit
+          </button>
+          <button type="button" class="btn" onclick="resetProfit()">
+            Reset
+          </button>
+        </form>
+        <div id="profit-result" class="result"></div>
+        <button class="back-btn" onclick="showCards()">
+          Back to Calculators
+        </button>
+      </div>
+
+      <!-- 5. Crop Rotation & Alternative Crop Suggestion -->
+      <div id="calc-rotation" class="calculator-section">
+        <h3>Crop Rotation & Seasonal Suggestion</h3>
+        <form id="rotation-form">
+          <div class="form-group">
+            <label for="current-crop">Current Crop:</label>
+            <select id="current-crop" name="current_crop" required>
+              <option value="">Select Crop</option>
+              <option value="potato">Potato</option>
+              <option value="tea">Tea</option>
+              <option value="coffee">Coffee</option>
+              <option value="sugarcane">Sugarcane</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="season-month">Select Season Month:</label>
+            <select id="season-month" name="season_month" required>
+              <option value="">Select Month</option>
+              <option value="1">January</option>
+              <option value="2">February</option>
+              <option value="3">March</option>
+              <option value="4">April</option>
+              <option value="5">May</option>
+              <option value="6">June</option>
+              <option value="7">July</option>
+              <option value="8">August</option>
+              <option value="9">September</option>
+              <option value="10">October</option>
+              <option value="11">November</option>
+              <option value="12">December</option>
+            </select>
+          </div>
+          <button type="button" class="btn" onclick="calculateRotation()">
+            Get Suggestions
+          </button>
+          <button type="button" class="btn" onclick="resetRotation()">
+            Reset
+          </button>
+        </form>
+        <div id="rotation-result" class="result"></div>
+        <button class="back-btn" onclick="showCards()">
+          Back to Calculators
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // When a card is clicked, hide the card grid and show the related calculator section.
+  document.querySelectorAll(".calc-card").forEach(function (card) {
+    card.addEventListener("click", function () {
+      var targetId = this.getAttribute("data-target");
+      document.getElementById("cards-container").style.display = "none";
+      document
+        .querySelectorAll(".calculator-section")
+        .forEach(function (section) {
+          section.classList.remove("active");
+        });
+      document.getElementById(targetId).classList.add("active");
+    });
+  });
+
+  // Function to return to the main cards view.
+  function showCards() {
+    document.getElementById("cards-container").style.display = "grid";
+    document
+      .querySelectorAll(".calculator-section")
+      .forEach(function (section) {
+        section.classList.remove("active");
+      });
+  }
+  // Reset Functions:
+  function resetHarvest() {
+    document.getElementById("sowing-date").value = "";
+    document.getElementById("growth-duration").value = "";
+    document.getElementById("sowing-result").innerText = "";
+  }
+  function resetYield() {
+    document.getElementById("base-yield").value = "";
+    document.getElementById("suitability-factor").value = "";
+    document.getElementById("yield-result").innerText = "";
+  }
+  function resetWater() {
+    document.getElementById("water-per-day").value = "";
+    document.getElementById("days-in-season").value = "";
+    document.getElementById("number-of-plants").value = "";
+    document.getElementById("water-result").innerText = "";
+  }
+  function resetProfit() {
+    document.getElementById("estimated-yield").value = "";
+    document.getElementById("price-per-kg").value = "";
+    document.getElementById("total-cost").value = "";
+    document.getElementById("profit-result").innerText = "";
+  }
+  function resetRotation() {
+    document.getElementById("current-crop").value = "";
+    document.getElementById("soil-nitrogen").value = "Low";
+    document.getElementById("rotation-result").innerText = "";
+  }
+  // Calculation Functions:
+  function calculateHarvest() {
+    let sowingDate = document.getElementById("sowing-date").value;
+    let growthDuration = parseInt(
+      document.getElementById("growth-duration").value
+    );
+    let sowingResult = document.getElementById("sowing-result");
+    if (!sowingDate || !growthDuration) {
+      sowingResult.style.color = "red";
+      sowingResult.innerText =
+        "Please enter both sowing date and growth duration.";
+      return;
+    }
+    if (sowingDate && growthDuration) {
+      let sowing = new Date(sowingDate);
+      sowing.setDate(sowing.getDate() + growthDuration);
+      let harvestDate = sowing.toISOString().split("T")[0];
+      sowingResult.style.color = "black";
+      sowingResult.innerText = "Estimated Harvest Date: " + harvestDate;
+    }
+  }
+
+  function calculateYield() {
+    let baseYield = parseFloat(document.getElementById("base-yield").value);
+    let suitabilityFactor = parseFloat(
+      document.getElementById("suitability-factor").value
+    );
+    let yieldResult = document.getElementById("yield-result");
+
+    if (!isNaN(baseYield) && !isNaN(suitabilityFactor)) {
+      let predictedYield = baseYield * suitabilityFactor;
+      yieldResult.style.color = "black";
+      yieldResult.innerText =
+        "Predicted Yield: " + predictedYield + " per hectare";
+    } else {
+      yieldResult.style.color = "red";
+      yieldResult.innerText =
+        "Please enter both base yield and suitability factor.";
+    }
+  }
+
+  function calculateWater() {
+    let waterPerDay = parseFloat(
+      document.getElementById("water-per-day").value
+    );
+    let daysInSeason = parseInt(
+      document.getElementById("days-in-season").value
+    );
+    let numberOfPlants = parseInt(
+      document.getElementById("number-of-plants").value
+    );
+    let waterResult = document.getElementById("water-result");
+
+    if (!isNaN(waterPerDay) && !isNaN(daysInSeason) && !isNaN(numberOfPlants)) {
+      let totalWater = waterPerDay * daysInSeason * numberOfPlants;
+      waterResult.style.color = "black";
+      waterResult.innerText = "Total Water Needed: " + totalWater + " liters";
+    } else {
+      waterResult.style.color = "red";
+      waterResult.innerText = "Please enter all three values.";
+    }
+  }
+  function calculateProfit() {
+    let estimatedYield = parseFloat(
+      document.getElementById("estimated-yield").value
+    );
+    let pricePerKg = parseFloat(document.getElementById("price-per-kg").value);
+    let totalCost = parseFloat(document.getElementById("total-cost").value);
+    let profitResult = document.getElementById("profit-result");
+
+    if (!isNaN(estimatedYield) && !isNaN(pricePerKg) && !isNaN(totalCost)) {
+      let revenue = estimatedYield * pricePerKg;
+      let profit = revenue - totalCost;
+      profitResult.style.color = "black";
+      profitResult.innerText = "Estimated Profit: $" + profit;
+    } else {
+      profitResult.style.color = "red";
+      profitResult.innerText = "Please enter all three values.";
+    }
+  }
+
+  function calculateRotation() {
+  const currentCrop = document.getElementById('current-crop').value.toLowerCase();
+  const selectedMonth = parseInt(document.getElementById('season-month').value);
+  const rotationResult = document.getElementById('rotation-result');
+
+  if (!currentCrop || !selectedMonth) {
+    rotationResult.innerHTML = "<p style='color: red'>Please select both crop and month.</p>";
+    return;
+  }
+
+  fetch("{% url 'crop_rotation_api' %}")
+    .then(response => response.json())
+    .then(cropData => {
+      const monthNames = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+      ];
+
+      const currentMonthName = monthNames[selectedMonth - 1];
+      const crop = cropData.find(c => c.name.toLowerCase() === currentCrop);
+
+      if (!crop) {
+        rotationResult.innerHTML = "<p style='color: red'>Crop not found.</p>";
+        return;
+      }
+
+      const isSuitable = crop.suitable_months.includes(selectedMonth);
+
+      if (isSuitable) {
+        rotationResult.innerHTML = `
+          <div class="suitability-success">
+            <h4>✅ Suitable for ${currentMonthName}</h4>
+            <p><strong>${currentCrop.charAt(0).toUpperCase() + currentCrop.slice(1)}</strong> can be grown during ${currentMonthName}.</p>
+            <p>Typical Growing Period:<br>${crop.season_text}</p>
+          </div>
+        `;
+      } else {
+        const alternatives = cropData
+          .filter(c => c.name.toLowerCase() !== currentCrop && c.suitable_months.includes(selectedMonth))
+          .map(c => c.name);
+
+        let suggestionText;
+        if (alternatives.length > 0) {
+          suggestionText = `
+            <div class="suitability-alert">
+              <h4>⚠️ Not Recommended for ${currentMonthName}</h4>
+              <p><strong>${currentCrop.charAt(0).toUpperCase() + currentCrop.slice(1)}</strong> is not typically grown during ${currentMonthName}.</p>
+              <p>Suggested Alternative Crops:</p>
+              <ul class="crop-suggestions">
+                ${alternatives.map(crop => `
+                  <li>
+                    <span class="crop-name">${crop.charAt(0).toUpperCase() + crop.slice(1)}</span>
+                    <span class="crop-season">${cropData.find(c => c.name === crop).season_text}</span>
+                  </li>
+                `).join('')}
+              </ul>
+            </div>
+          `;
+        } else {
+          suggestionText = `
+            <div class="suitability-warning">
+              <p>No suitable crops from the listed options for ${currentMonthName}.</p>
+              <p>Consider off-season vegetables or consult local agricultural experts.</p>
+            </div>
+          `;
+        }
+
+        rotationResult.innerHTML = suggestionText;
+      }
+    })
+    .catch(error => {
+      rotationResult.innerHTML = "<p style='color: red'>Error fetching crop data.</p>";
+      console.error('Error fetching crop data:', error);
+    });
+}
+
+function resetRotation() {
+  document.getElementById('current-crop').value = '';
+  document.getElementById('season-month').value = '';
+  document.getElementById('rotation-result').innerHTML = '';
+}
+</script>
+
+{% endblock dashboard_content %}

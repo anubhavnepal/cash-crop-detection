@@ -1,0 +1,136 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block dashboard_content %}
+<h2 class="mb-2">Welcome, {{user.username}}</h2>
+<div class="upload-section">
+  <form method="POST" enctype="multipart/form-data" action="{% url 'upload' %}">
+      {% csrf_token %}
+          <div class="form-group">
+              <label for="image">Upload Image:</label><br />
+              <input type="file" name="image" accept="image/*" id="id_image" onchange="previewImage(event)" required>
+              {% if prediction_form.image.errors %}
+                  <div class="text-danger">{{ prediction_form.image.errors }}</div>
+              {% endif %}
+          </div>
+          
+          <!-- Image preview container -->
+          <div id="image-preview" style="display: none; margin: 20px 0;">
+              <img id="preview" class="uploaded-image" alt="Preview">
+          </div>
+  
+          <div class="form-group">
+              <button type="submit" class="btn">Predict</button>
+          </div>
+  
+          {% if prediction %}
+              <div id="prediction-results">
+                  <!-- Show uploaded image after prediction -->
+                  {% if image %}
+                  <div class="uploaded-image-container">
+                      <img src="data:image/jpeg;base64,{{ image }}" class="uploaded-image" alt="Predicted Image">
+                  </div>
+                  {% endif %}
+                  
+                  <p><b>Predicted Disease:</b> {{ prediction }}</p>
+                  
+                  {% if disease_name %}
+                      <!-- Show Details button and hidden details -->
+                      <button id="toggle-details" class="btn" onclick="toggleDetails()">Show Details</button>
+                      
+                      <div id="disease-details" style="display: none; margin-top: 15px;">
+                        <h3>{{ disease_name }}</h3>
+                        <div class="horizontal-cards-container">
+                            <div class="horizontal-card">
+                                <h4 class="card-title">📖 Description</h4>
+                                <div class="card-content">{{ disease_description }}</div>
+                            </div>
+                            
+                            {% if disease_severity %}
+                            <div class="horizontal-card severity-card" data-severity="{{ disease_severity|lower|slice:'6' }}">
+                                <h4 class="card-title">⚠️ Severity</h4>
+                                <div class="card-content">{{ disease_severity }}</div>
+                            </div>
+                            {% endif %}
+                            {% if disease_protect %}
+                            <div class="horizontal-card">
+                                <h4 class="card-title">🛡️ Protection</h4>
+                                <div class="card-content">
+                                    {% autoescape off %}
+                                    {{ disease_protect|linebreaksbr }}
+                                    {% endautoescape %}
+                                </div>
+                            </div>
+                            {% endif %}
+                            
+                            <!-- {% if disease_area %}
+                            <div class="horizontal-card">
+                                <h4 class="card-title">📍 Cultivated Area</h4>
+                                <div class="card-content">{{ disease_area }}</div>
+                            </div>
+                            {% endif %}
+                            
+                            {% if disease_amount %}
+                            <div class="horizontal-card">
+                                <h4 class="card-title">📊 Amount</h4>
+                                <div class="card-content">{{ disease_amount }}</div>
+                            </div>
+                            {% endif %} -->
+                            
+                        </div>
+                    </div>
+                  {% endif %}
+              </div>
+          {% endif %}
+  </form>
+</div>
+<script>
+    // Image preview before upload
+  function previewImage(event) {
+        const preview = document.getElementById('preview');
+        const previewContainer = document.getElementById('image-preview');
+        const file = event.target.files[0];
+        
+        if (file) {
+            previewContainer.style.display = 'block';
+            preview.src = URL.createObjectURL(file);
+        } else {
+            previewContainer.style.display = 'none';
+        }
+    }
+
+    // Toggle disease details
+    function toggleDetails() {
+        const details = document.getElementById('disease-details');
+        const button = document.getElementById('toggle-details');
+        
+        if (details.style.display === 'none') {
+            details.style.display = 'block';
+            button.textContent = 'Hide Details';
+        } else {
+            details.style.display = 'none';
+            button.textContent = 'Show Details';
+        }
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+        // Format protection measures as list
+        const protectionCards = document.querySelectorAll('.horizontal-card .card-content');
+        protectionCards.forEach(card => {
+            if (card.textContent.includes('•') || card.textContent.includes('.')) {
+                const content = card.innerHTML.replace(/•/g, '<li>')
+                    .replace(/(\d+\.)/g, '<li>$1')
+                    .replace(/\. /g, '</li>');
+                card.innerHTML = `<ul>${content}</ul>`;
+            }
+        });
+
+        // Set severity colors
+        const severityCards = document.querySelectorAll('.severity-card');
+        severityCards.forEach(card => {
+            const text = card.textContent.toLowerCase();
+            if (text.includes('high')) card.style.borderColor = '#e74c3c';
+            else if (text.includes('medium')) card.style.borderColor = '#f1c40f';
+            else if (text.includes('low')) card.style.borderColor = '#2ecc71';
+        });
+    });
+</script>
+{% endblock %}

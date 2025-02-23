@@ -1,0 +1,45 @@
+{% extends 'index.html' %}
+{% block dashboard_content %}
+<div class="past-records-section">
+  <h2 class="mb-2">Past Records</h2>
+  {% if past_records %}
+        <ul class="record-list">
+          {% for record in past_records %}
+            <li class="record-item">
+              <div class="record-info">
+                <div class="record-image">
+                  {% if record.image %}
+                    <img src="{{ record.image.url }}" alt="Uploaded Image" />
+                  {% else %}
+                    <p>No image uploaded.</p>
+                  {% endif %}
+                </div>
+                <div class="record-details">
+                  <p><b>Prediction:</b> {{ record.prediction }}</p>
+                  <p><b>Date:</b> {{ record.date }}</p>
+                  <p><b>Image Path:</b> {{ record.image.name }}</p>
+                </div>
+              </div>
+              <button class="delete-button" onclick="confirmDelete('{{ record.id }}')">
+                <i class="fas fa-trash"></i> Delete
+              </button>
+            </li>
+          {% endfor %}
+        </ul>
+        {% if show_load_more %}
+          <a href="?load_all=true" class="btn">Load More</a>
+        {% elif past_records|length > 4 %}
+          <a href="?load_all=false" class="btn">Show Less</a>
+        {% endif %}
+      {% else %}
+        <p>No past records found.</p>
+      {% endif %}
+</div>
+<script>
+   function confirmDelete(recordId) {
+    if (confirm("Are you sure you want to delete this record? This action cannot be undone.")) {
+      window.location.href = `/delete-record/${recordId}/`;
+    }
+  }
+</script>
+{% endblock %}

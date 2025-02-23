@@ -1,0 +1,236 @@
+{% extends 'layouts.html' %}
+
+{% load static %}
+
+{% block title %}
+<title>GreenShield AI - Crop Disease Predictor</title>
+{% endblock %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="home bd-grid" id="home">
+    <div class="home__data">
+        <h1 class="home__title">Welcome to,<br>
+            <span class="home__title-colo">Green</span>
+            <span class="home__title-color">Shield</span>
+            <span class="home__title-colo">AI</span>
+        </h1>
+        <p>Instant Plant Health Diagnostics, Anytime, Anywhere!</p>
+        <a href="{% url 'login' %}" class="button">Get Started</a>
+    </div>
+    <img src="{% static 'images/cash_crops.jpg' %}" alt="">
+</section>
+
+<section class="about section" id="about">
+    <h2 class="section-title">About</h2>
+    <div class="about__container bd-gri">
+        <div>
+            <p class="about__text">At GreenShield AI, our mission is to empower farmers, gardeners, and plant enthusiasts with a reliable and accessible tool for diagnosing plant diseases. Using cutting-edge Artificial Intelligence (AI) and Convolutional Neural Networks (CNNs), our web-based platform provides accurate and fast disease detection based on uploaded plant images.
+
+                We understand the challenges that come with plant health management, especially in regions where resources and expertise are limited. That's why we’ve designed GreenShield AI to be user-friendly, scalable, and efficient, making plant disease diagnosis easier and more accessible to everyone—whether you're a farmer, researcher, or hobbyist.
+
+                Our platform not only identifies diseases but also helps you take proactive steps towards safeguarding your crops, enhancing productivity, and reducing loss. With a focus on local agriculture, GreenShield AI uses a dataset tailored to the specific needs of your region, ensuring more accurate and relevant results.
+
+                Join us in revolutionizing plant health management and taking the first step towards healthier, thriving crops with GreenShield AI—where technology meets nature.
+            </p>
+        </div>
+    </div>
+</section>
+
+<section class="services section " id="services">
+    <h2 class="section-title">Services</h2>
+    <div class="container">
+        <p class="text-services">Explore our expert solutions to protect and optimize your cash crops, from disease detection to sustainable farming practices.</p>
+        <div class="cards">
+
+            <a href="index.html" class="card">
+                <i class="fas fa-leaf"></i>
+                <h3>Cash Crop Disease Detection</h3>
+                <p>We detect diseases in valuable crops, helping farmers act fast to protect their investments.</p>
+            </a>
+
+            <a href="index.html" class="card">
+                <i class="fas fa-info-circle"></i>
+                <h3>Disease Descriptions</h3>
+                <p>Once identified, we provide details on symptoms, causes, and spread.</p>
+            </a>
+
+            <a href="index.html" class="card">
+                <i class="fas fa-map-marker-alt"></i>
+                <h3>Crop Geographic Distribution</h3>
+                <p>Discover where cash crops are grown and the regional risks involved.</p>
+            </a>
+
+            <a href="index.html" class="card">
+                <i class="fas fa-chart-line"></i>
+                <h3>Growth Trends</h3>
+                <p>Stay informed on current growth patterns of crops to make better decisions.</p>
+            </a>
+
+            <a href="index.html" class="card">
+                <i class="fa-solid fa-hands-holding-circle"></i>
+                <h3>Natural Protection</h3>
+                <p>Explore sustainable, natural methods for protecting your crops.</p>
+            </a>
+
+        </div>
+    </div>
+</section>
+<!-- Chatbot HTML -->
+<div id="chatbot-container">
+    <div id="chatbot-header">
+        <span>GreenShield Assistant</span>
+        <button id="close-chatbot">×</button>
+    </div>
+    <div id="chatbot-body">
+        <div id="chatbot-messages"></div>
+    </div>
+    <div id="chatbot-footer">
+        <input
+            type="text"
+            id="chatbot-input"
+            placeholder="Ask me anything..."
+            autocomplete="off"
+        />
+        <button id="chatbot-send"><i class="fa-solid fa-paper-plane"></i></button>
+    </div>
+</div>
+
+<!-- Chatbot Toggle Button -->
+<button id="open-chatbot"><i class="fa-solid fa-comment-dots"></i></button>
+
+{% endblock %}
+
+{% block script %}
+<!-- <script src="https://unpkg.com/scrollreveal"></script> -->
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const chatbotContainer = document.getElementById("chatbot-container");
+        const chatbotToggle = document.getElementById("open-chatbot");
+        const closeChatbot = document.getElementById("close-chatbot");
+        const chatbotInput = document.getElementById("chatbot-input");
+        const chatbotSend = document.getElementById("chatbot-send");
+        const chatbotMessages = document.getElementById("chatbot-messages");
+
+        // Predefined URLs
+        const aboutUrl = "#about";
+        const servicesUrl = "#services";
+        const loginUrl = "{% url 'login' %}";
+        const registerUrl = "{% url 'register' %}";
+
+        // Predefined responses with variations
+        const predefinedResponses = {
+            greetings: {
+                triggers: ["hello", "hi", "hey", "hola", "amigos", "greetings"],
+                response: "Hi there! How can I assist you today?",
+            },
+            help: {
+                triggers: ["help", "assist", "commands", "options"],
+                response: "Here are some commands you can try: 'About', 'Services', 'Login', or 'Register'.",
+            },
+            about: {
+                triggers: ["about", "info", "information", "details"],
+                response: `GreenShield AI is dedicated to providing plant health diagnostics. Visit the <a href="${aboutUrl}">About</a> section for more details.`,
+            },
+            services: {
+                triggers: ["services", "offerings", "features", "service", "offering", "feature", "what you do", "what you offer", "what you provide"],
+                response: `We offer various services such as disease detection, disease descriptions, and more. Check out our <a href="${servicesUrl}">Services</a> section.`,
+            },
+            login: {
+                triggers: ["login", "sign in", "log in", "predict disease"],
+                response: `Click <a href="${loginUrl}" target="_blank">here</a> to log in.`,
+            },
+            register: {
+                triggers: ["register", "sign up", "create account"],
+                response: `Click <a href="${registerUrl}" target="_blank">here</a> to create a new account.`,
+            },
+            clear: {
+                triggers: ["clear", "reset", "start over", "clean"],
+                response: "Chat cleared.",
+                clearChat: () => {
+                    chatbotMessages.innerHTML = ""; 
+                },
+            },
+            default: {
+                triggers: [],
+                response: "I'm sorry, I didn't understand that. Try asking 'help'.",
+            },
+        };
+
+        // Function to add a message
+        function addMessage(content, isUser = false) {
+            const message = document.createElement("div");
+            message.classList.add(isUser ? "user-message" : "bot-message");
+
+            if (!isUser) {
+                // Allow rendering HTML for bot responses
+                message.innerHTML = content;
+            } else {
+                message.textContent = content;
+            }
+
+            chatbotMessages.appendChild(message);
+            chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+        }
+
+        // Function to get bot response based on user input
+        function getResponse(userInput) {
+            userInput = userInput.toLowerCase().trim(); // Normalize input
+
+            // Check each predefined response for triggers
+            for (const key in predefinedResponses) {
+                const { triggers, response } = predefinedResponses[key];
+                if (triggers.includes(userInput)) {
+                    return response;
+                }
+            }
+
+            // Return the default response if no match is found
+            return predefinedResponses.default.response;
+        }
+
+        // Function to handle user message
+        function handleUserMessage() {
+            const userInput = chatbotInput.value.trim();
+            if (!userInput) return;
+
+            addMessage(userInput, true); // Add user's message
+            chatbotInput.value = "";
+
+            // Check for the clear command
+            const clearCommand = predefinedResponses.clear.triggers.some(trigger => userInput.toLowerCase() === trigger);
+            if (clearCommand) {
+                // If clear command, clear the chat and display the response
+                predefinedResponses.clear.clearChat();
+                setTimeout(() => addMessage(predefinedResponses.clear.response), 500);
+                return; // Stop further processing after clearing chat
+            }
+            // Get bot's response and add it to the chat
+            const response = getResponse(userInput);
+            setTimeout(() => addMessage(response), 500); // Add bot's response with delay
+        }
+
+        // Toggle chatbot visibility
+        chatbotToggle.addEventListener("click", () => {
+            chatbotContainer.style.display = "flex";
+            chatbotToggle.style.display = "none";
+        });
+
+        closeChatbot.addEventListener("click", () => {
+            chatbotContainer.style.display = "none";
+            chatbotToggle.style.display = "block";
+        });
+
+        // Event listeners for sending messages
+        chatbotSend.addEventListener("click", handleUserMessage);
+        chatbotInput.addEventListener("keypress", (e) => {
+            if (e.key === "Enter") handleUserMessage();
+        });
+    });
+</script>
+
+
+{% endblock %}

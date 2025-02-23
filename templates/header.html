@@ -1,0 +1,36 @@
+<header class="l-header">
+    <nav class="nav bd-grid">
+      <div>
+        <a href="{% url 'index' %}" class="nav__logo">GreenShield AI</a>
+      </div>
+  
+      <div class="nav__menu" id="nav-menu">
+        <ul class="nav__list">
+          <li class="nav__item">
+            <a href="{% url 'index' %}" class="nav__link active-link">Home</a>
+          </li>
+          <li class="nav__item">
+            <a href="{% url 'index' %}#about" class="nav__link">About</a>
+          </li>
+          <li class="nav__item">
+            <a href="{% url 'index' %}#services" class="nav__link">Services</a>
+          </li>
+          {% if user.is_authenticated %}
+          <li class="nav__item"><a href="{% url 'logout' %}">Logout</a></li>
+          {% else %}
+          <li class="nav__item">
+            <a href="{% url 'login' %}" class="nav__link">Login</a>
+          </li>
+          <li class="nav__item">
+            <a href="{% url 'register' %}" class="nav__link">Register</a>
+          </li>
+          {% endif %}
+        </ul>
+      </div>
+  
+      <div class="nav__toggle" id="nav-toggle">
+        <i class="bx bx-menu"></i>
+      </div>
+    </nav>
+  </header>
+  

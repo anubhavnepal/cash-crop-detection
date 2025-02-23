@@ -1,0 +1,91 @@
+{% extends 'index.html' %} 
+{% load static %} 
+{% block title %}
+<title>Seasonal Harvesting | Crop Disease Predictor</title>
+{% endblock title %} 
+
+{% block dashboard_content %}
+<div class="seasonal-harvesting-wrapper">
+  <div class="seasonal-harvest-container">
+    <h2>Seasonal Growing & Harvesting Techniques</h2>
+    <div class="harvest-cards-container" id="harvest-cards-container"></div>
+  </div>
+</div>
+
+<script>
+  fetch("{% url 'seasonal_harvesting_api' %}")
+    .then((response) => response.json())
+    .then((crops) => {
+      const container = document.getElementById("harvest-cards-container");
+      // Create a card for each crop.
+      crops.forEach((crop) => {
+        // Create main card container
+        const card = document.createElement("div");
+        card.className = "harvest-card";
+
+        // Left side: Icon & Title
+        const cardLeft = document.createElement("div");
+        cardLeft.className = "card-left";
+        const iconElem = document.createElement("i");
+        iconElem.className = `${crop.icon} crop-icon`;
+        const titleElem = document.createElement("h3");
+        titleElem.className = "crop-title";
+        titleElem.textContent = crop.title;
+        cardLeft.appendChild(iconElem);
+        cardLeft.appendChild(titleElem);
+
+        // Right side container
+        const cardRight = document.createElement("div");
+        cardRight.className = "card-right";
+
+        // Season Section
+        const seasonSection = document.createElement("div");
+        seasonSection.className = "season-section";
+        const seasonHeader = document.createElement("h4");
+        seasonHeader.textContent = "Growing Season";
+        seasonSection.appendChild(seasonHeader);
+        const seasonList = document.createElement("ul");
+        crop.season.forEach((season) => {
+          const li = document.createElement("li");
+          const seasonIcon = document.createElement("i");
+          seasonIcon.className = season.icon;
+          li.appendChild(seasonIcon);
+          li.insertAdjacentText(
+            "beforeend",
+            ` ${season.label}: ${season.period}`
+          );
+          seasonList.appendChild(li);
+        });
+        seasonSection.appendChild(seasonList);
+
+        // Techniques Section
+        const techniquesSection = document.createElement("div");
+        techniquesSection.className = "techniques-section";
+        const techniquesHeader = document.createElement("h4");
+        techniquesHeader.textContent = "Harvesting Techniques";
+        techniquesSection.appendChild(techniquesHeader);
+        const techniquesList = document.createElement("ul");
+        crop.techniques.forEach((technique) => {
+          const li = document.createElement("li");
+          const checkIcon = document.createElement("i");
+          checkIcon.className = "fas fa-check-circle";
+          li.appendChild(checkIcon);
+          li.insertAdjacentText("beforeend", ` ${technique}`);
+          techniquesList.appendChild(li);
+        });
+        techniquesSection.appendChild(techniquesList);
+
+        // Append sections to the right side and card
+        cardRight.appendChild(seasonSection);
+        cardRight.appendChild(techniquesSection);
+        card.appendChild(cardLeft);
+        card.appendChild(cardRight);
+        container.appendChild(card);
+      });
+    })
+    .catch((error) => {
+      console.error("Error fetching crops data:", error);
+    });
+</script>
+
+{% endblock dashboard_content %}

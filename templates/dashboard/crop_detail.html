@@ -1,0 +1,55 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block title %}
+<title>{{ crop_name }} | Crop Disease Predictor</title>
+{% endblock title %}
+
+{% block dashboard_content %}
+<div id="crops-details-section-wrapper">
+  <div class="crop-detail-container">
+      <!-- 1) Top Image -->
+      <img src="{% static 'images/cash_crops.jpg' %}" alt="{{ crop_name }}">
+    
+      <!-- 2) Crop Name -->
+      <h2>{{ crop_name }}</h2>
+    
+      <!-- 3) Cultivated Area & Amount from the healthy class (if available) -->
+      {% if healthy_disease %}
+      <div class="healthy-info">
+        {% if healthy_disease.area %}
+          <h4>Cultivated Area</h4>
+          <p>{{ healthy_disease.area }}</p>
+        {% endif %}
+        {% if healthy_disease.amount %}
+          <h4>Amount</h4>
+          <p>{{ healthy_disease.amount }}</p>
+        {% endif %}
+      </div>
+      {% endif %}
+    
+      <!-- 4) List the disease records (excluding healthy) -->
+      <p class="class_count">Currently we offer <span>{{ diseases.count }} disease detection </span> in <span>{{ crop_name }}:</span></p>
+    
+      <div class="horizontal-cards-container">
+        {% for disease in diseases %}
+          <div class="horizontal-card severity-card" data-severity="{{ disease.severity|lower }}">
+            <h4 class="card-title">{{ disease.name }}</h4>
+            <div class="card-content">
+              {% if disease.description %}
+                <p><strong>Description:</strong> {{ disease.description }}</p>
+              {% endif %}
+              {% if disease.severity %}
+                <p><strong>Severity:</strong> {{ disease.severity }}</p>
+              {% endif %}
+              {% if disease.protect %}
+                <p><strong>Protection:</strong></p>
+                <p>{% autoescape off %}{{ disease.protect|linebreaksbr }}{% endautoescape %}</p>
+              {% endif %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+  </div>
+</div> 
+{% endblock dashboard_content %}
+

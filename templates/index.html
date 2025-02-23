@@ -1,0 +1,57 @@
+{% extends 'layouts.html' %} 
+{% load static %}
+{% block title %}
+<title>Dashboard | Crop Disease Predictor</title>
+{% endblock title %}
+
+{% block head %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/dashboard.css' %}">
+{% endblock head %}
+
+{% block content %}
+<div class="container">
+  <div class="sidebar">
+    <ul>
+      <li>
+        <a href="{% url 'crops' %}" class="{% if request.resolver_match.url_name == 'crops' or 'crop_detail' in request.resolver_match.url_name %}active{% endif %}">
+          <i class="fas fa-leaf"></i> Supported Crops
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'nearby-shop' %}" class="{% if request.resolver_match.url_name == 'nearby-shop' %}active{% endif %}">
+          <i class="fas fa-store"></i> Crop Seed Shops
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'seasonal-harvest' %}" class="{% if request.resolver_match.url_name == 'seasonal-harvest' %}active{% endif %}">
+          <i class="fas fa-store"></i> Seasonal Harvesting
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'cost-calculator' %}" class="{% if request.resolver_match.url_name == 'cost-calculator' %}active{% endif %}">
+          <i class="fas fa-store"></i> Optimization Tools
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'upload' %}" class="{% if request.resolver_match.url_name == 'upload' %}active{% endif %}">
+          <i class="fas fa-upload"></i> Upload Image
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'past_records' %}" class="{% if request.resolver_match.url_name == 'past_records' %}active{% endif %}">
+          <i class="fas fa-history"></i> Past Records
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'user_profile' %}" class="{% if request.resolver_match.url_name == 'user_profile' %}active{% endif %}">
+          <i class="fas fa-user"></i> User Profile Section
+        </a>
+      </li>
+    </ul>
+    
+  </div>
+  <div class="main-content">
+    {% block dashboard_content %}{% endblock %}
+  </div>
+</div>
+{% endblock %}
