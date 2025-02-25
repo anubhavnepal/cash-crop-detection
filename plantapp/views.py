@@ -221,9 +221,24 @@ def past_records(request):
     else:
         return redirect('login')
 
+def get_image_mapping():
+    return {
+        'tea': 'images/tea-leaves.jpg',
+        'potato': 'images/potato-leaves.jpg',
+        'sugarcane': 'images/sugarcane-leaves.jpeg',
+        'coffee': 'images/coffee-leaves.jpg'
+    }
+
 @login_required
 def crops_view(request):
-    return render(request, 'dashboard/crops.html')
+    image_mapping = get_image_mapping()
+    crops = [
+        {'name': 'Tea', 'slug': 'tea', 'image_src': image_mapping['tea']},
+        {'name': 'Potato', 'slug': 'potato', 'image_src': image_mapping['potato']},
+        {'name': 'Sugarcane', 'slug': 'sugarcane', 'image_src': image_mapping['sugarcane']},
+        {'name': 'Coffee', 'slug': 'coffee', 'image_src': image_mapping['coffee']},
+    ]
+    return render(request, 'dashboard/crops.html', {'crops': crops})
 
 @login_required
 def crop_detail(request, crop_name):
@@ -231,19 +246,23 @@ def crop_detail(request, crop_name):
     Shows a detail page for the given crop (e.g. 'tea', 'potato', etc.).
     We assume Disease.name has patterns like 'Tea Healthy', 'Tea Bird Eye Spot', etc.
     """
-    # 1) Get the healthy entry for this crop (if any).
-    #    We look for names that contain the crop name + "healthy".
+
     healthy_disease = Disease.objects.filter(
         Q(name__icontains=crop_name) & Q(name__icontains='healthy')
     ).first()
 
-    # 2) Get the disease entries (exclude the healthy one).
+    #Get the disease entries (exclude the healthy one).
     disease_list = Disease.objects.filter(Q(name__icontains=crop_name) & ~Q(name__icontains='healthy'))
 
+    # Add dynamic image mapping based on crop_name
+    image_mapping = get_image_mapping()
+    image_src = image_mapping.get(crop_name.lower(), 'images/cash_crops.jpg')
+    
     context = {
         'crop_name': crop_name.capitalize(),
         'healthy_disease': healthy_disease,   # might be None if not found
         'diseases': disease_list,
+        'image_src': image_src,  # Pass the dynamic image path
     }
     return render(request, 'dashboard/crop_detail.html', context)
 

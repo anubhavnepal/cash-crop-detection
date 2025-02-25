@@ -10,36 +10,13 @@
       <h2>Our Supported Cash Crops</h2>
       
       <div class="crops-cards-container">
-        
-        <!-- ========== TEA Card ========== -->
-        <div class="crop-card">
-          <img src="{% static 'images/cash_crops.jpg' %}" alt="Tea">
-          <h3 class="crop-name">Tea</h3>
-          <a href="{% url 'crop_detail' crop_name='tea' %}" class="know-more-btn">Know More</a>
-        </div>
-        
-        <!-- ========== POTATO Card ========== -->
-        <div class="crop-card">
-          <img src="{% static 'images/cash_crops.jpg' %}" alt="Potato">
-          <h3 class="crop-name">Potato</h3>
-          <a href="{% url 'crop_detail' crop_name='potato' %}"  class="know-more-btn">Know More</a>
-        </div>
-    
-        <!-- ========== SUGARCANE Card ========== -->
-        <div class="crop-card">
-          <img src="{% static 'images/cash_crops.jpg' %}" alt="Sugarcane">
-          <h3 class="crop-name">Sugarcane</h3>
-          <a href="{% url 'crop_detail' crop_name='sugarcane' %}" class="know-more-btn">Know More</a>
-
-        </div>
-    
-        <!-- ========== COFFEE Card ========== -->
-        <div class="crop-card">
-          <img src="{% static 'images/cash_crops.jpg' %}" alt="Coffee">
-          <h3 class="crop-name">Coffee</h3>
-          <a href="{% url 'crop_detail' crop_name='coffee' %}" class="know-more-btn">Know More</a>
-        </div>
-    
+        {% for crop in crops %}
+          <div class="crop-card">
+            <img src="{% static crop.image_src %}" alt="{{ crop.name }}">
+            <h3 class="crop-name">{{ crop.name }}</h3>
+            <a href="{% url 'crop_detail' crop_name=crop.slug %}" class="know-more-btn">Know More</a>
+          </div>
+        {% endfor %}
       </div>
   </div>
 </div>

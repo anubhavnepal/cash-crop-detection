@@ -19,17 +19,17 @@
       </li>
       <li>
         <a href="{% url 'nearby-shop' %}" class="{% if request.resolver_match.url_name == 'nearby-shop' %}active{% endif %}">
-          <i class="fas fa-store"></i> Crop Seed Shops
+          <i class="fas fa-map-marker-alt"></i> Nearby Shops
         </a>
       </li>
       <li>
         <a href="{% url 'seasonal-harvest' %}" class="{% if request.resolver_match.url_name == 'seasonal-harvest' %}active{% endif %}">
-          <i class="fas fa-store"></i> Seasonal Harvesting
+          <i class="fas fa-sun"></i> Seasonal Harvesting
         </a>
       </li>
       <li>
         <a href="{% url 'cost-calculator' %}" class="{% if request.resolver_match.url_name == 'cost-calculator' %}active{% endif %}">
-          <i class="fas fa-store"></i> Optimization Tools
+          <i class="fas fa-calculator"></i> Optimization Tools
         </a>
       </li>
       <li>
@@ -47,8 +47,7 @@
           <i class="fas fa-user"></i> User Profile Section
         </a>
       </li>
-    </ul>
-    
+    </ul>   
   </div>
   <div class="main-content">
     {% block dashboard_content %}{% endblock %}
