@@ -30,7 +30,7 @@ if __name__ == "__main__":
     improved_model.summary(input_shape=(None, 224, 224, 3))
     
     try:
-        # Here, a separate test set is provided so that the plots compare validation vs. test metrics.
+
         history = improved_model.train(train_images, train_labels, val_images, val_labels,
                                        test_images=test_images, test_labels=test_labels,
                                        epochs=50, batch_size=8, learning_rate=0.001,

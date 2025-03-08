@@ -35,7 +35,7 @@ class NearbyShop(models.Model):
         return self.name
     
 class SeasonalHarvesting(models.Model):
-    title = models.CharField(max_length=100)
+    title = models.CharField(max_length=100, null=True)
     icon = models.CharField(max_length=100, blank=True, null=True)
     season = models.JSONField(default=list, blank=True)
     techniques = models.JSONField(default=list, blank=True)
@@ -44,9 +44,17 @@ class SeasonalHarvesting(models.Model):
         return self.title
     
 class CropRotation(models.Model):
-    name= models.CharField(max_length=100)
+    name= models.CharField(max_length=100, null=True)
     suitable_months =models.JSONField()
     season_text = models.TextField()
     
     def __str__(self):
-      return self.name  
+      return self.name
+
+class Crop(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    growth_duration = models.IntegerField()
+    water_per_day = models.FloatField(default=1.0) 
+
+    def __str__(self):
+        return self.name

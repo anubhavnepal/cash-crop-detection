@@ -24,7 +24,7 @@ from .forms import PredictionForm, LoginForm, SignUpForm
 from .models import Disease, Prediction
 from PIL import Image
 from model.predict import predict_disease
-from plantapp.models import NearbyShop, SeasonalHarvesting, CropRotation
+from plantapp.models import NearbyShop, SeasonalHarvesting, CropRotation, Crop
 
 
 class UserRegistrationView(TemplateView):
@@ -317,6 +317,18 @@ def get_crop_rotation_data(request):
         for crop in crops
     ]
     return JsonResponse(crop_list, safe=False)
+
+def get_crop_growth_duration(request):
+    crop_name = request.GET.get('crop')
+    try:
+        crop = Crop.objects.get(name=crop_name)
+        return JsonResponse({
+            'growth_duration': crop.growth_duration,
+            'water_per_day': crop.water_per_day 
+        })
+    except Crop.DoesNotExist:
+        return JsonResponse({'error': 'Crop not found'}, status=404)
+
 @login_required
 def profile_view(request):
     if request.method == 'POST':

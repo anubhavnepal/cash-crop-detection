@@ -52,6 +52,16 @@
             <input type="date" id="sowing-date" name="sowing_date" required />
           </div>
           <div class="form-group">
+            <label for="crop-type">Select Crop:</label>
+            <select id="crop-type" name="crop_type" onchange="updateGrowthDuration()">
+              <option value="">Select Crop</option>
+              <option value="potato">Potato</option>
+              <option value="tea">Tea</option>
+              <option value="sugarcane">Sugarcane</option>
+              <option value="coffee">Coffee</option>
+            </select>
+          </div>
+          <div class="form-group">
             <label for="growth-duration">Growth Duration (days):</label>
             <input
               type="number"
@@ -72,52 +82,66 @@
         <button class="back-btn" onclick="showCards()">
           Back to Calculators
         </button>
-      </div>
+      </div>      
 
       <!-- 2. Yield Prediction Calculator -->
       <div id="calc-yield" class="calculator-section">
-        <h3>Yield Prediction Calculator</h3>
+        <h3>Crop Yield Calculator</h3>
         <form id="yield-form">
           <div class="form-group">
-            <label for="base-yield">Base Yield (per hectare):</label>
+            <label for="total-production">Total Production (e.g., in kg or bushels):</label>
             <input
               type="number"
-              id="base-yield"
-              name="base_yield"
-              placeholder="e.g., 1000"
+              id="total-production"
+              name="total_production"
+              placeholder="e.g., 2000"
               required
             />
           </div>
           <div class="form-group">
-            <label for="suitability-factor"
-              >Season Suitability Factor (e.g., 1.0 for ideal):</label
-            >
+            <label for="harvest-area">
+              Harvested Area:
+            </label>
             <input
               type="number"
-              step="0.1"
-              id="suitability-factor"
-              name="suitability_factor"
-              placeholder="e.g., 0.8"
+              id="harvest-area"
+              name="harvest_area"
+              placeholder="e.g., 1"
               required
             />
           </div>
-          <button type="button" class="btn" onclick="calculateYield()">
-            Calculate Predicted Yield
-          </button>
-          <button type="button" class="btn" onclick="resetYield()">
-            Reset
-          </button>
+          <div class="form-group">
+            <label for="area-unit">Select Area Unit:</label>
+            <select id="area-unit" name="area_unit" required>
+              <option value="hectare">Hectare</option>
+              <option value="ropani">Ropani (1 Ropani ≈ 0.05 ha)</option>
+              <option value="bigha">Bigha (1 Bigha ≈ 0.677 ha)</option>
+            </select>
+          </div>
+          <button type="button" class="btn" onclick="calculateYield()">Calculate Yield</button>
+          <button type="button" class="btn" onclick="resetYield()">Reset</button>
         </form>
         <div id="yield-result" class="result"></div>
-        <button class="back-btn" onclick="showCards()">
-          Back to Calculators
-        </button>
+        <button class="back-btn" onclick="showCards()">Back to Calculators</button>
       </div>
-
-      <!-- 3. Seasonal Water Requirement Calculator -->
+      
+      <!-- 3. Water Requirement Calculator -->
       <div id="calc-water" class="calculator-section">
         <h3>Water Requirement Calculator</h3>
         <form id="water-form">
+          <!-- 1. Crop Selection Dropdown -->
+          <div class="form-group">
+            <label for="crop-type-water">Select Crop:</label>
+            <select id="crop-type-water" name="crop_type_water" onchange="updateWaterDefaults()">
+              <option value="">Select Crop</option>
+              <option value="potato">Potato</option>
+              <option value="tea">Tea</option>
+              <option value="sugarcane">Sugarcane</option>
+              <option value="coffee">Coffee</option>
+            </select>
+          </div>
+
+          <!-- 2. Water per Day (liters per plant) -->
           <div class="form-group">
             <label for="water-per-day">Water per Day (liters per plant):</label>
             <input
@@ -128,6 +152,8 @@
               required
             />
           </div>
+
+          <!-- 3. Number of Days in Season -->
           <div class="form-group">
             <label for="days-in-season">Number of Days in Season:</label>
             <input
@@ -138,6 +164,8 @@
               required
             />
           </div>
+
+          <!-- 4. Number of Plants -->
           <div class="form-group">
             <label for="number-of-plants">Number of Plants:</label>
             <input
@@ -148,6 +176,8 @@
               required
             />
           </div>
+
+          <!-- Calculate & Reset Buttons -->
           <button type="button" class="btn" onclick="calculateWater()">
             Calculate Total Water Needed
           </button>
@@ -161,9 +191,10 @@
         </button>
       </div>
 
+
       <!-- 4. Profit Estimation Calculator -->
       <div id="calc-profit" class="calculator-section">
-        <h3>Profit Estimation Calculator</h3>
+        <h3>Profit Estimation Calculator for Cash Crops</h3>
         <form id="profit-form">
           <div class="form-group">
             <label for="estimated-yield">Estimated Yield (kg):</label>
@@ -176,7 +207,17 @@
             />
           </div>
           <div class="form-group">
-            <label for="price-per-kg">Price per Kg:</label>
+            <label for="buy-cost-per-kg">Buy Cost Price per Kg (Rs.):</label>
+            <input
+              type="number"
+              id="buy-cost-per-kg"
+              name="buy_cost_per_kg"
+              placeholder="e.g., 1"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="price-per-kg">Selling Price per Kg (Rs.):</label>
             <input
               type="number"
               id="price-per-kg"
@@ -186,13 +227,30 @@
             />
           </div>
           <div class="form-group">
-            <label for="total-cost">Total Cost:</label>
+            <label for="total-cost">Total Other Costs (Rs.):</label>
             <input
               type="number"
               id="total-cost"
               name="total_cost"
               placeholder="e.g., 500"
-              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="labor-cost">Labor Cost (Rs.):</label>
+            <input
+              type="number"
+              id="labor-cost"
+              name="labor_cost"
+              placeholder="e.g., 200"
+            />
+          </div>
+          <div class="form-group">
+            <label for="machinery-cost">Machinery Cost (Rs.):</label>
+            <input
+              type="number"
+              id="machinery-cost"
+              name="machinery_cost"
+              placeholder="e.g., 300"
             />
           </div>
           <button type="button" class="btn" onclick="calculateProfit()">
@@ -203,10 +261,9 @@
           </button>
         </form>
         <div id="profit-result" class="result"></div>
-        <button class="back-btn" onclick="showCards()">
-          Back to Calculators
-        </button>
+        <button class="back-btn" onclick="showCards()">Back to Calculators</button>
       </div>
+      
 
       <!-- 5. Crop Rotation & Alternative Crop Suggestion -->
       <div id="calc-rotation" class="calculator-section">
@@ -287,8 +344,8 @@
     document.getElementById("sowing-result").innerText = "";
   }
   function resetYield() {
-    document.getElementById("base-yield").value = "";
-    document.getElementById("suitability-factor").value = "";
+    document.getElementById("harvest-area").value = ""
+    document.getElementById("total-production").value = ""
     document.getElementById("yield-result").innerText = "";
   }
   function resetWater() {
@@ -299,7 +356,10 @@
   }
   function resetProfit() {
     document.getElementById("estimated-yield").value = "";
+    document.getElementById("buy-cost-per-kg").value = "";
     document.getElementById("price-per-kg").value = "";
+    document.getElementById("labor-cost").value = "";
+    document.getElementById("machinery-cost").value = "";
     document.getElementById("total-cost").value = "";
     document.getElementById("profit-result").innerText = "";
   }
@@ -309,83 +369,159 @@
     document.getElementById("rotation-result").innerText = "";
   }
   // Calculation Functions:
-  function calculateHarvest() {
-    let sowingDate = document.getElementById("sowing-date").value;
-    let growthDuration = parseInt(
-      document.getElementById("growth-duration").value
-    );
-    let sowingResult = document.getElementById("sowing-result");
-    if (!sowingDate || !growthDuration) {
-      sowingResult.style.color = "red";
-      sowingResult.innerText =
-        "Please enter both sowing date and growth duration.";
-      return;
-    }
-    if (sowingDate && growthDuration) {
-      let sowing = new Date(sowingDate);
-      sowing.setDate(sowing.getDate() + growthDuration);
-      let harvestDate = sowing.toISOString().split("T")[0];
-      sowingResult.style.color = "black";
-      sowingResult.innerText = "Estimated Harvest Date: " + harvestDate;
-    }
+  // Automatically set the growth duration when a crop is selected.
+function updateGrowthDuration() {
+  const cropType = document.getElementById("crop-type").value;
+  const growthDurationInput = document.getElementById("growth-duration");
+
+  fetch(`/api/get_crop_growth_duration/?crop=${cropType}`)
+    .then(response => response.json())
+    .then(data => {
+      if (data.growth_duration) {
+        growthDurationInput.value = data.growth_duration;
+      } else {
+        growthDurationInput.value = "";
+      }
+    })
+    .catch(error => {
+      console.error('Error fetching crop data:', error);
+      growthDurationInput.value = "";
+    });
+}
+
+function calculateHarvest() {
+  // Get values from inputs.
+  const sowingDateInput = document.getElementById("sowing-date").value;
+  const growthDurationInput = document.getElementById("growth-duration").value;
+  const sowingResult = document.getElementById("sowing-result");
+
+  // Validate that a sowing date has been provided.
+  if (!sowingDateInput) {
+    sowingResult.style.color = "red";
+    sowingResult.innerText = "Please enter a sowing date.";
+    return;
   }
 
-  function calculateYield() {
-    let baseYield = parseFloat(document.getElementById("base-yield").value);
-    let suitabilityFactor = parseFloat(
-      document.getElementById("suitability-factor").value
-    );
-    let yieldResult = document.getElementById("yield-result");
-
-    if (!isNaN(baseYield) && !isNaN(suitabilityFactor)) {
-      let predictedYield = baseYield * suitabilityFactor;
-      yieldResult.style.color = "black";
-      yieldResult.innerText =
-        "Predicted Yield: " + predictedYield + " per hectare";
-    } else {
-      yieldResult.style.color = "red";
-      yieldResult.innerText =
-        "Please enter both base yield and suitability factor.";
-    }
+  // Parse and validate the growth duration.
+  const growthDuration = parseInt(growthDurationInput, 10);
+  if (isNaN(growthDuration) || growthDuration <= 0) {
+    sowingResult.style.color = "red";
+    sowingResult.innerText = "Please enter a valid growth duration.";
+    return;
   }
 
-  function calculateWater() {
-    let waterPerDay = parseFloat(
-      document.getElementById("water-per-day").value
-    );
-    let daysInSeason = parseInt(
-      document.getElementById("days-in-season").value
-    );
-    let numberOfPlants = parseInt(
-      document.getElementById("number-of-plants").value
-    );
-    let waterResult = document.getElementById("water-result");
+  // Create a Date object from the sowing date.
+  const sowingDate = new Date(sowingDateInput);
 
-    if (!isNaN(waterPerDay) && !isNaN(daysInSeason) && !isNaN(numberOfPlants)) {
-      let totalWater = waterPerDay * daysInSeason * numberOfPlants;
-      waterResult.style.color = "black";
-      waterResult.innerText = "Total Water Needed: " + totalWater + " liters";
-    } else {
-      waterResult.style.color = "red";
-      waterResult.innerText = "Please enter all three values.";
-    }
+  // Add the growth duration (in days) to the sowing date.
+  sowingDate.setDate(sowingDate.getDate() + growthDuration);
+
+  // Format the resulting date as YYYY-MM-DD.
+  const harvestDate = sowingDate.toISOString().split("T")[0];
+
+  // Display the estimated harvest date.
+  sowingResult.style.color = "black";
+  sowingResult.innerText = "Estimated Harvest Date: " + harvestDate;
+}
+
+function calculateYield() {
+  let totalProduction = parseFloat(document.getElementById("total-production").value);
+  let harvestArea = parseFloat(document.getElementById("harvest-area").value);
+  let areaUnit = document.getElementById("area-unit").value;
+  let yieldResult = document.getElementById("yield-result");
+
+  // Convert the harvested area to hectares based on the selected unit
+  let areaInHectares;
+  if (areaUnit === "hectare") {
+    areaInHectares = harvestArea;
+  } else if (areaUnit === "ropani") {
+    // 1 Ropani ≈ 0.05 hectare
+    areaInHectares = harvestArea * 0.05;
+  } else if (areaUnit === "bigha") {
+    // 1 Bigha ≈ 0.677 hectare
+    areaInHectares = harvestArea * 0.677;
   }
+
+  if (!isNaN(totalProduction) && !isNaN(harvestArea) && harvestArea !== 0) {
+    // Yield is calculated as: Total Production / Harvested Area (converted to hectares)
+    let calculatedYield = totalProduction / areaInHectares;
+    yieldResult.style.color = "black";
+    yieldResult.innerText = "Calculated Crop Yield: " + calculatedYield.toFixed(2) + " per hectare";
+  } else {
+    yieldResult.style.color = "red";
+    yieldResult.innerText = "Please enter valid numbers and ensure the harvested area is not zero.";
+  }
+}
+
+ function updateWaterDefaults() {
+  const cropType = document.getElementById("crop-type-water").value;
+  const daysInput = document.getElementById("days-in-season");
+  const waterInput = document.getElementById("water-per-day");
+
+  fetch(`/api/get_crop_growth_duration/?crop=${cropType}`)
+    .then(response => response.json())
+    .then(data => {
+      if (data.growth_duration && data.water_per_day) {
+        daysInput.value = data.growth_duration;
+        waterInput.value = data.water_per_day;
+      } else {
+        daysInput.value = "";
+        waterInput.value = "";
+      }
+    })
+    .catch(error => {
+      console.error('Error fetching crop data:', error);
+      daysInput.value = "";
+      waterInput.value = "";
+    });
+}
+
+function calculateWater() {
+  const waterPerDay = parseFloat(document.getElementById("water-per-day").value);
+  const daysInSeason = parseInt(document.getElementById("days-in-season").value);
+  const numberOfPlants = parseInt(document.getElementById("number-of-plants").value);
+  const waterResult = document.getElementById("water-result");
+
+  if (
+    !isNaN(waterPerDay) &&
+    !isNaN(daysInSeason) &&
+    !isNaN(numberOfPlants)
+  ) {
+    const totalWater = waterPerDay * daysInSeason * numberOfPlants;
+    waterResult.style.color = "black";
+    waterResult.innerText = `Total Water Needed: ${totalWater} liters`;
+  } else {
+    waterResult.style.color = "red";
+    waterResult.innerText = "Please enter all values correctly.";
+  }
+}
   function calculateProfit() {
-    let estimatedYield = parseFloat(
-      document.getElementById("estimated-yield").value
-    );
+    // Get inputs for yield, buy cost, selling price, and various cost components
+    let estimatedYield = parseFloat(document.getElementById("estimated-yield").value);
+    let buyCostPerKg = parseFloat(document.getElementById("buy-cost-per-kg").value);
     let pricePerKg = parseFloat(document.getElementById("price-per-kg").value);
-    let totalCost = parseFloat(document.getElementById("total-cost").value);
+    let totalCost = parseFloat(document.getElementById("total-cost").value) || 0;
+    let laborCost = parseFloat(document.getElementById("labor-cost").value) || 0;
+    let machineryCost = parseFloat(document.getElementById("machinery-cost").value) || 0;
     let profitResult = document.getElementById("profit-result");
 
-    if (!isNaN(estimatedYield) && !isNaN(pricePerKg) && !isNaN(totalCost)) {
+    // Check if all mandatory inputs are valid numbers
+    if (
+      !isNaN(estimatedYield) &&
+      !isNaN(buyCostPerKg) &&
+      !isNaN(pricePerKg)
+    ) {
+      // Calculate revenue, total expenses (all costs), and profit
       let revenue = estimatedYield * pricePerKg;
-      let profit = revenue - totalCost;
+      let buyCost = estimatedYield * buyCostPerKg;
+      let totalExpenses = totalCost + laborCost + machineryCost + buyCost;
+      let profit = revenue - totalExpenses;
+
       profitResult.style.color = "black";
-      profitResult.innerText = "Estimated Profit: $" + profit;
+      profitResult.innerText = "Estimated Profit: Rs." + profit;
     } else {
       profitResult.style.color = "red";
-      profitResult.innerText = "Please enter all three values.";
+      profitResult.innerText = "Please enter all required values.";
     }
   }
 

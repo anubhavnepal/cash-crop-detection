@@ -4,7 +4,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 
-from .views import PredictView, LoginView, UserRegistrationView, user_logout, LandingPageView, past_records, profile_view, crops_view, shop_view, shop_data, seasonal_harvest_view, farming_cost_calculator
+from .views import PredictView, LoginView, UserRegistrationView, user_logout, LandingPageView, past_records, profile_view, crops_view, shop_view, shop_data, seasonal_harvest_view, farming_cost_calculator, get_crop_growth_duration
 from plantapp import views
 
 urlpatterns = [
@@ -29,6 +29,7 @@ urlpatterns = [
     path('api/shops/', shop_data, name='shop_data'),
     path('api/seasonal-harvesting/', views.seasonal_harvesting_api, name='seasonal_harvesting_api'),
     path('api/crop-rotation/', views.get_crop_rotation_data, name='crop_rotation_api'),
+    path('api/get_crop_growth_duration/', get_crop_growth_duration, name='get_crop_growth_duration'),
 
     path('crops/<str:crop_name>/', views.crop_detail, name='crop_detail'),
     

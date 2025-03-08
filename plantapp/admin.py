@@ -3,13 +3,14 @@ from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 from django.utils.html import format_html
 
-from .models import Disease, Prediction, NearbyShop, SeasonalHarvesting, CropRotation
+from .models import Disease, Prediction, NearbyShop, SeasonalHarvesting, CropRotation, Crop
 
 # Disease model registration
 admin.site.register(Disease)
 admin.site.register(NearbyShop)
 admin.site.register(SeasonalHarvesting)
 admin.site.register(CropRotation)
+admin.site.register(Crop)
 
 # Prediction model registration
 @admin.register(Prediction)
