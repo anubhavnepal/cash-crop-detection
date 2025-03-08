@@ -13,6 +13,16 @@
   <div class="sidebar">
     <ul>
       <li>
+        <a href="{% url 'upload' %}" class="{% if request.resolver_match.url_name == 'upload' %}active{% endif %}">
+          <i class="fas fa-upload"></i> Upload Image
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'past_records' %}" class="{% if request.resolver_match.url_name == 'past_records' %}active{% endif %}">
+          <i class="fas fa-history"></i> Past Records
+        </a>
+      </li>
+      <li>
         <a href="{% url 'crops' %}" class="{% if request.resolver_match.url_name == 'crops' or 'crop_detail' in request.resolver_match.url_name %}active{% endif %}">
           <i class="fas fa-leaf"></i> Supported Crops
         </a>
@@ -30,16 +40,6 @@
       <li>
         <a href="{% url 'cost-calculator' %}" class="{% if request.resolver_match.url_name == 'cost-calculator' %}active{% endif %}">
           <i class="fas fa-calculator"></i> Optimization Tools
-        </a>
-      </li>
-      <li>
-        <a href="{% url 'upload' %}" class="{% if request.resolver_match.url_name == 'upload' %}active{% endif %}">
-          <i class="fas fa-upload"></i> Upload Image
-        </a>
-      </li>
-      <li>
-        <a href="{% url 'past_records' %}" class="{% if request.resolver_match.url_name == 'past_records' %}active{% endif %}">
-          <i class="fas fa-history"></i> Past Records
         </a>
       </li>
       <li>
